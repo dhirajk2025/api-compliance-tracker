@@ -8,7 +8,7 @@ Usage (called by GitHub Actions workflow):
 
 Environment variables required:
     GITHUB_TOKEN   - GitHub token (auto-set by Actions)
-    GITHUB_REPO    - owner/repo (e.g. dhirajk2025/steps_aggregator)
+    GITHUB_REPO    - owner/repo (e.g. dhirajk2025/api-compliance-tracker)
 """
 
 import json

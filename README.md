@@ -1,4 +1,4 @@
-# Steps Aggregator
+# API Compliance Tracker
 
 AI-assisted workflow for keeping platform API development processes up to date at ID.me.
 
@@ -31,7 +31,7 @@ A knowledge base + compliance checklist system for new platform API development.
 
 ## Compliance Checklist Structure
 
-### Template Epic (`steps_aggregator-2bj`)
+### Template Epic (`apictr-2bj`)
 
 Reusable 26-issue template across 8 phases. Copy this for each new platform API.
 
@@ -51,7 +51,7 @@ Reusable 26-issue template across 8 phases. Copy this for each new platform API.
 For services that expose multiple APIs (e.g., Face API suite), use a **suite-level epic** + **per-API child epics**:
 
 ```
-Suite Epic (e.g., steps_aggregator-88v)        ← Legal, ARB, PRR, DRS — done once
+Suite Epic (e.g., apictr-88v)                  ← Legal, ARB, PRR, DRS — done once
 ├── API Epic: Face Enroll                       ← OpenAPI spec, E2E tests, Observability, CI/CD
 ├── API Epic: Face Compare
 ├── API Epic: Face Search
@@ -215,5 +215,5 @@ Export as PDF and run through `pdf-chromadb-processor` agent, or describe it as 
 - **Revoke API tokens** after use — never commit tokens to git
 - PDF process documents are excluded from git (internal company docs)
 - ChromaDB collection: `idme-processes`
-- Beads prefix: `steps_aggregator`
+- Beads prefix: `apictr`
 - The same Atlassian API token works for both Confluence and Jira REST APIs
