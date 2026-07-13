@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dhiraj's Documents</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f6fa; color: #1a1a2e; }
+    header { background: #1a1a2e; color: white; padding: 24px 32px; }
+    header h1 { font-size: 1.5rem; font-weight: 600; }
+    header p { font-size: 0.85rem; color: #8899aa; margin-top: 4px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
+    .search-bar { margin-bottom: 24px; }
+    .search-bar input {
+      width: 100%; padding: 10px 16px; font-size: 0.95rem;
+      border: 1px solid #dde1e9; border-radius: 8px; background: white;
+      outline: none;
+    }
+    .search-bar input:focus { border-color: #4f6ef7; box-shadow: 0 0 0 3px rgba(79,110,247,0.1); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+    .card { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+    .card-header {
+      padding: 14px 18px; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+    }
+    .card-header .count {
+      margin-left: auto; background: rgba(255,255,255,0.3);
+      padding: 2px 8px; border-radius: 99px; font-size: 0.75rem;
+    }
+    .card ul { list-style: none; padding: 0; }
+    .card ul li { border-top: 1px solid #f0f2f7; }
+    .card ul li a {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 18px; font-size: 0.85rem; color: #2d3a8c;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .card ul li a:hover { background: #f0f3ff; }
+    .card ul li a .icon { flex-shrink: 0; font-size: 0.9rem; margin-top: 1px; }
+    .card ul li a .text { flex: 1; }
+    .card ul li a .date { flex-shrink: 0; font-size: 0.75rem; color: #9aa0b4; white-space: nowrap; }
+
+    /* Category colors */
+    .cat-design    { background: #4f46e5; color: white; }
+    .cat-onepager  { background: #0891b2; color: white; }
+    .cat-roadmap   { background: #059669; color: white; }
+    .cat-checklist { background: #d97706; color: white; }
+    .cat-perf      { background: #dc2626; color: white; }
+    .cat-team      { background: #7c3aed; color: white; }
+    .cat-meeting   { background: #6b7280; color: white; }
+    .cat-incident  { background: #b91c1c; color: white; }
+    .cat-slides    { background: #ea580c; color: white; }
+    .cat-confluence { background: #0052cc; color: white; }
+
+    .hidden { display: none; }
+    .no-results { text-align: center; padding: 40px; color: #9aa0b4; grid-column: 1/-1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Documents</h1>
+  <p>Google Drive · Confluence &mdash; last indexed May 2026</p>
+</header>
+
+<div class="container">
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Filter documents..." oninput="filterDocs()" />
+  </div>
+
+  <div class="grid" id="grid">
+
+    <!-- DESIGN DOCUMENTS -->
+    <div class="card" data-category="Design Documents">
+      <div class="card-header cat-design">
+        <span>Design Documents</span>
+        <span class="count">14</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/document/d/15oHyjJ2HfXMTkDet7qzjy6HiInaRKbGGQa_9ihpytP4/edit" target="_blank"><span class="icon">📄</span><span class="text">Web SDK — Consent API Access &amp; Timeout/Outage Behavior</span></a></li>
+        <li><a href="https://docs.google.com/document/d/13ED63-U6DfBCYVgz8eZejzGQt2k4OYQ87VyTMTN2dUc/edit" target="_blank"><span class="icon">📄</span><span class="text">Legal ID Data Migration</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1eQD2Hb61NawrG2U0FfbByvGuXWh2qQhCyDV2rgZZlEk/edit" target="_blank"><span class="icon">📄</span><span class="text">Military Inspection Implementation with Temporal Workflows</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1iRP-KfUccBmYBxS0Qn9r9Kf5kXtqiBY-bXVbbTiGDzY/edit" target="_blank"><span class="icon">📄</span><span class="text">Add Regula as Backup Provider for Legal ID Verification</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1x4s5i5ZeknRzYEgqSbOrI7YPz2HlxXahr9jwJvWYS9k/edit" target="_blank"><span class="icon">📄</span><span class="text">DDD Design Document: Consent API and Data Model</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1LLE_FOzm8X0CEEexK6pdBbfT3AfHjt9gcTdUpEbrmyk/edit" target="_blank"><span class="icon">📄</span><span class="text">Face Liveness Verification API</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1gi33tilav_RyMhDrxZu1L8aGdjVMOf1FxNw1IX8tMAA/edit" target="_blank"><span class="icon">📄</span><span class="text">Face-Based Biometric Agreement &amp; Verification</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1rJ-cNvapAn2lrt6J1koQxbFc-AdHBaULoQFlQpS-evA/edit" target="_blank"><span class="icon">📄</span><span class="text">Face Image Storage and 1:N Face Search Rollout Requirements</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1CLsR4uaGc2WBWq7dikDCfhUmdXjkyfqKE8Ob9InNJOo/edit" target="_blank"><span class="icon">📄</span><span class="text">Platform API Access Strategy</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1JoplknM_JfRhZnBh8rYu3E-2P1WxLT3VpqpoqWqOK8s/edit" target="_blank"><span class="icon">📄</span><span class="text">Person &amp; Identity Trust Platform</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1f8Ez_eh_shDrMzU-cDe-MRh-mcCW4wPWcAzJ0ry4-e4/edit" target="_blank"><span class="icon">📄</span><span class="text">Project Skyfall Platform API Work</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1blbtBWlw80IkwpGBOS1tgKVx21BBiz-0THS8R74rvi0/edit" target="_blank"><span class="icon">📄</span><span class="text">Credential API - TSA Use Case</span></a></li>
+        <li><a href="https://docs.google.com/document/d/11_OSVoCPNXFC8EdJVIGuXREFSdlNdWriDzqbGoksNGo/edit" target="_blank"><span class="icon">📄</span><span class="text">CORS Fix in consent-api</span></a></li>
+        <li><a href="https://docs.google.com/document/d/19_Wt6wmtSnVJKXEkiJHz1tv4Q5H-LLrfOETxZxZm9SM/edit" target="_blank"><span class="icon">📄</span><span class="text">Regula Documentation</span></a></li>
+      </ul>
+    </div>
+
+    <!-- 1-PAGERS / DECISION DOCS -->
+    <div class="card" data-category="1-Pagers & Decision Docs">
+      <div class="card-header cat-onepager">
+        <span>1-Pagers &amp; Decision Docs</span>
+        <span class="count">6</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/document/d/1b4GGMswscrdVt_bWQNv1UEIANit4aWFE9q_-pmLXsCQ/edit" target="_blank"><span class="icon">📋</span><span class="text">PKI Decision 1-Pager</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1cZ8xvhpbd43UjgKvziTAI8ijQeP3KWvRdigTrDV5xBw/edit" target="_blank"><span class="icon">📋</span><span class="text">IVA Verification API Integration: Two Decisions Needed</span></a></li>
+        <li><a href="https://docs.google.com/document/d/183BlNtX8I3HL6XiDVueGH-7ZMHYn4MuVz-UuamORaqQ/edit" target="_blank"><span class="icon">📋</span><span class="text">Code Freeze Exception Request - Consent &amp; Credentials API — LABS</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1acIkbKAbetuzjrVQEO3eW6-VJ7PSz64wdgsdJ3jJvLc/edit" target="_blank"><span class="icon">📋</span><span class="text">Domain Driven Design Worksheet</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1KTsNxOBx_1nijvc0Yz2Vg7aELhT4H8OsUBeN7KKu0R8/edit" target="_blank"><span class="icon">📋</span><span class="text">Improving PR Cycle Time from Inception to Production</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1JdwcA5LsUW0qSk2ETL0h1nXRneoYruHSH5EwlJP6Kuk/edit" target="_blank"><span class="icon">📋</span><span class="text">What is Slowing You Down?</span></a></li>
+      </ul>
+    </div>
+
+    <!-- ROADMAPS & PLANNING -->
+    <div class="card" data-category="Roadmaps & Planning">
+      <div class="card-header cat-roadmap">
+        <span>Roadmaps &amp; Planning</span>
+        <span class="count">10</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/spreadsheets/d/1ZBJVaEA1d6zqdYqlR4-qU8BJ-hr4qrmLFJolCrMaWVE/edit" target="_blank"><span class="icon">📊</span><span class="text">Valhallah Milestones</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1ORW5IMEDgESM-AXVa-jyvEyFxQhn-akl9okjBUMUSEg/edit" target="_blank"><span class="icon">📊</span><span class="text">IGP Resourcing</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1raMjmD5xiZvUSNFfxh_ctVmToVEyBlMBrE92-s2YxXg/edit" target="_blank"><span class="icon">📊</span><span class="text">Identity Graph Platform Roadmap - Dhiraj Version</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1yym8fFf4jxKfJjnb2q-jj-tmQVsH61ros5Hgqob3pa8/edit" target="_blank"><span class="icon">📊</span><span class="text">Identity Graph &amp; Attribution Validation Team Roadmap</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1nVzdaC1WtLiqTGP_mMix3DmI8Ru7OLkZ2yHYu2X00v8/edit" target="_blank"><span class="icon">📊</span><span class="text">Face API Milestones</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1IYZdKW35olxMXGuikxjzu3lkMYsTgyil1qWg_oolfIs/edit" target="_blank"><span class="icon">📊</span><span class="text">Attribute Mapping Milestones</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/14KYa1SXtx7yKh_LKzEX7ZKEC8JK_I7d57IGxNEN9IKo/edit" target="_blank"><span class="icon">📊</span><span class="text">Work Items for Liveness Check</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1kBqdKA4aSMpdgjGkjfE7fYPxw1Kip4CR1phoxGgZZ-0/edit" target="_blank"><span class="icon">📊</span><span class="text">Profiles Capacity Planning</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/17Wxoit1P9Th27ZCnrmFzV0XJcWJHoWuGChV8TG36ZBw/edit" target="_blank"><span class="icon">📊</span><span class="text">Platform API Development Template</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1fy4DY9-8eGyaIkUVz3csvaysOKs5vh8JCfGeKPaDrS4/edit" target="_blank"><span class="icon">📄</span><span class="text">Biometric and Legal ID Verification Release Plan</span></a></li>
+      </ul>
+    </div>
+
+    <!-- CHECKLISTS & TEMPLATES -->
+    <div class="card" data-category="Checklists & Templates">
+      <div class="card-header cat-checklist">
+        <span>Checklists &amp; Templates</span>
+        <span class="count">5</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/spreadsheets/d/13B9XfsvQ2_-OKwmV3lA4eXBLyr3eu1-dQyAqIowMNVM/edit" target="_blank"><span class="icon">✅</span><span class="text">Launch Readiness Checklist</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1rZ1I76RyzlW3EeFiwjBpIJJ9jfyKRQa9/edit" target="_blank"><span class="icon">✅</span><span class="text">External API Production Readiness Checklist</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1O7zWvt30v7WFlvuQlr240K8aV2RTkRy5Qk9MOgh54Cg/edit" target="_blank"><span class="icon">✅</span><span class="text">Copy of Production Readiness Review Template</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1RolB4DU_ggKgs9qvOgPuM-mB79sw2pWa/edit" target="_blank"><span class="icon">✅</span><span class="text">Release Scorecard Template</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1iYspEr25QPypCF2qXV128lcVWnDts0NESCzTW4EvnrA/edit" target="_blank"><span class="icon">✅</span><span class="text">Gantt Chart</span></a></li>
+      </ul>
+    </div>
+
+    <!-- PRESENTATIONS / SLIDES -->
+    <div class="card" data-category="Presentations & Slides">
+      <div class="card-header cat-slides">
+        <span>Presentations &amp; Slides</span>
+        <span class="count">5</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/presentation/d/1a2QW1IC2QRsO0gVB8g0k7z9BdWnEZcnTeU-A1wmWXrg/edit" target="_blank"><span class="icon">📊</span><span class="text">Biometrics/Credentials API Team Accomplishments</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1ycgdvIpN_5WENKvOohQ8OhF7cTBjXeUlhQGmVX5O14Q/edit" target="_blank"><span class="icon">📊</span><span class="text">Team Accomplishments - Slide 28</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1HCsDNRxlbsPSCgrabmNwEBUz25D5wDjhuKURh663Ddk/edit" target="_blank"><span class="icon">📊</span><span class="text">Biometric/Credential Team Roadmap</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1vfAPltDiiyZ10eU4hzIyXVgLqDNQWSHl7L0kXJTl96I/edit" target="_blank"><span class="icon">📊</span><span class="text">2025 - Engineering Performance Review</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1aykec7gJ5qZuKp1boP86vMu-LgPw_Aj-Y2MaNVaTKk8/edit" target="_blank"><span class="icon">📊</span><span class="text">Platform Key Launches/Accomplishments</span></a></li>
+      </ul>
+    </div>
+
+    <!-- PERFORMANCE REVIEWS -->
+    <div class="card" data-category="Performance Reviews">
+      <div class="card-header cat-perf">
+        <span>Performance Reviews</span>
+        <span class="count">7</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/presentation/d/1_tMYBDwXRSD5RsxlxSrGonkrJOfaXyuyFA_Znlm3baM/edit" target="_blank"><span class="icon">👤</span><span class="text">IGV Engineering Performance Reviews 2025</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1RVIbIVPoBg__gtKkQx-Iiwg01Zcjj8t9P0OW0xB5juQ/edit" target="_blank"><span class="icon">👤</span><span class="text">Engineering Performance Reviews 2025 v3 (A)</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1Ayjsdc_7X3TchVSsmrs8XqCHy_BX7fzGPvQEuhEIvq0/edit" target="_blank"><span class="icon">👤</span><span class="text">Engineering Performance Reviews 2025 v3 (B)</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1SFs6RTjlNnyMq-BUXrPPzuqRI81SgtsAQGQWIQtuF20/edit" target="_blank"><span class="icon">👤</span><span class="text">Engineering Performance Reviews 2025 v2</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/140Ze3Ac_GrXMkGjG2tJ_EVJmyuhTcogtum_JquvyIPg/edit" target="_blank"><span class="icon">👤</span><span class="text">Engineering Performance Reviews 2025 Updated</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/16wv3r8f3wVJ_XKdGITcPb4N8zDAiPYjWHxVc9-2Hpqg/edit" target="_blank"><span class="icon">👤</span><span class="text">Jayesh (Performance)</span></a></li>
+        <li><a href="https://docs.google.com/presentation/d/1sRzRSJhIch_ABwT6rvTcobniS9AAg1v1RMYX5k0rnVs/edit" target="_blank"><span class="icon">👤</span><span class="text">Gaurav (Performance)</span></a></li>
+      </ul>
+    </div>
+
+    <!-- TEAM & ORG -->
+    <div class="card" data-category="Team & Org">
+      <div class="card-header cat-team">
+        <span>Team &amp; Org</span>
+        <span class="count">8</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/document/d/1Q8syBN1V0zMVkM_GoBeK6qJfe_RcEK4fP9CA1GkM7yQ/edit" target="_blank"><span class="icon">🏢</span><span class="text">Identity Graph Platform Team Charter</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1EFZ15_1G5al9PJOEr7KcRxXv7GPb_yjAFcxPKGQIV7A/edit" target="_blank"><span class="icon">🏢</span><span class="text">AVS Team Charter</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1y64DZ2Vxso4Ax70CWploi8oOW_GzsuwIVMRST7VlAU0/edit" target="_blank"><span class="icon">🏢</span><span class="text">Staff Engineer - Credential API JD</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1bpD_J_UOxHcYQI5DXdvWjNC6wUmfA3Cx-zAIY9Ezy90/edit" target="_blank"><span class="icon">🏢</span><span class="text">Summer 2026 Intern Project Spec</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1rQtfj7ibADJyA2rnEz4PmzOsTUwBIlPgCxcaVqQclr4/edit" target="_blank"><span class="icon">🏢</span><span class="text">My Leadership Update</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1zc9aP-xbqE4iPjWHLwPEbfHVlkLPYVA3Rc_33wITaos/edit" target="_blank"><span class="icon">🏢</span><span class="text">AI Demo Ideas</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1Y3kdBhFSmP7BIT17RQOpTwxP1_S2cbkGkaHf91vceqw/edit" target="_blank"><span class="icon">🏢</span><span class="text">Jayesh and Gaurav (1:1 Notes)</span></a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1_M-jdFaOJ9nAjwlO6VPuZp1CQjjbBqTxJMea3u6vDI4/edit" target="_blank"><span class="icon">📊</span><span class="text">Engineering Levels Matrix</span></a></li>
+      </ul>
+    </div>
+
+    <!-- CONFLUENCE PAGES -->
+    <div class="card" data-category="Confluence Pages">
+      <div class="card-header cat-confluence">
+        <span>Confluence Pages</span>
+        <span class="count">6</span>
+      </div>
+      <ul>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/pages/4523163649" target="_blank"><span class="icon">📘</span><span class="text">Biometric/Credential API New Hire Onboarding Guide</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/pages/4081516548" target="_blank"><span class="icon">📘</span><span class="text">Face Provider Platform APIs</span></a></li>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/pages/4081516579" target="_blank"><span class="icon">📘</span><span class="text">📊 Face Provider Platform API (Dashboards &amp; On-Call)</span></a></li>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/pages/4100259855" target="_blank"><span class="icon">📘</span><span class="text">List of Dashboards</span></a></li>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/pages/4036952066" target="_blank"><span class="icon">📘</span><span class="text">Retro 2025-09-22</span></a></li>
+        <li><a href="https://idmeinc.atlassian.net/wiki/spaces/EN/folder/4100063254" target="_blank"><span class="icon">📁</span><span class="text">On-Call Resources (folder)</span></a></li>
+      </ul>
+    </div>
+
+    <!-- INCIDENT & ANALYSIS -->
+    <div class="card" data-category="Incident & Analysis">
+      <div class="card-header cat-incident">
+        <span>Incident &amp; Analysis</span>
+        <span class="count">4</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/document/d/1OOA9USw-j5ZsQ2yEqB2khYZ-NvUNnG06_Sn-YbygAos/edit" target="_blank"><span class="icon">🚨</span><span class="text">Face API Incident Summary</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1W6vQD5_HGYBS4g0kwTFzY8F6yeyV__DqXbSSsXcm0dQ/edit" target="_blank"><span class="icon">🚨</span><span class="text">Face API Prod Launch Announcement</span></a></li>
+        <li><a href="https://docs.google.com/document/d/126w6eOJC8lL2zwcyxrpl1apjNkiXMPyWy8vvggGgYZQ/edit" target="_blank"><span class="icon">🔍</span><span class="text">Claude Code Memory Leak Analysis</span></a></li>
+        <li><a href="https://docs.google.com/document/d/19vwkBBAu7mfXS47nfUV46pldLTUrAo1G7tJSLYXTJL4/edit" target="_blank"><span class="icon">🔍</span><span class="text">Attribute Mapping: Skyfall Status</span></a></li>
+      </ul>
+    </div>
+
+    <!-- MEETING NOTES -->
+    <div class="card" data-category="Meeting Notes">
+      <div class="card-header cat-meeting">
+        <span>Meeting Notes</span>
+        <span class="count">20</span>
+      </div>
+      <ul>
+        <li><a href="https://docs.google.com/document/d/1dJPLTiLrSdocRLJtzRmrAqV3PTWwTi8pnh1vQzLAWn0/edit" target="_blank"><span class="icon">📝</span><span class="text">Highlander/Valhalla Project Sync up</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1MBc9-bQHfA2CaLirBE-fAZDKla32fP6oHfmg2ZXcBkY/edit" target="_blank"><span class="icon">📝</span><span class="text">Trust Service Integration Questions</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1TNMJzW3Nh5ata5UtDdsWGdpgM_sV-lWDdjR7CfngQkU/edit" target="_blank"><span class="icon">📝</span><span class="text">Call with Mickey</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/151oub67lZdIeBehiCdwaVtfie0IMFukkY4teuO0ectA/edit" target="_blank"><span class="icon">📝</span><span class="text">Credential API Sync up</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1JAeK2ZLqDkOeX9Z4CxohR9ekohbT_SS68wGwymzoU-w/edit" target="_blank"><span class="icon">📝</span><span class="text">Regula Integration — Next Steps</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/14imYep6B3vZeYGAsRXphVUdegnaTPJHIMb3byUnwX-Y/edit" target="_blank"><span class="icon">📝</span><span class="text">Valhalla: Legal ID Inspection High-Level Walkthrough</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1EYZFaEWq_cQ8Sl7FQDH3FZ4-S175Bf0eiFLd1YBglpA/edit" target="_blank"><span class="icon">📝</span><span class="text">Project Valhallah: Legal ID Inspection API — Deep Dive</span><span class="date">Apr 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/10uCUjplml25VKq-OVyOJjbP9i_AqXIcCuu-dT5bcfpo/edit" target="_blank"><span class="icon">📝</span><span class="text">Legal ID Data Migration Sync</span><span class="date">Mar 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1aoLcNyoSo7NGWy-DVn7K_1OzEevM9iLcNFkQKdl9ug8/edit" target="_blank"><span class="icon">📝</span><span class="text">IVA Integration — Upload API &amp; Tools</span><span class="date">Mar 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1nqOwPFpQbb2ix6Zca0YQbgZppablwCozetIifXYVg8A/edit" target="_blank"><span class="icon">📝</span><span class="text">Regula as Backup Provider</span><span class="date">Mar 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1514aQgi3Wb3Ak3_TahuqN6xPdiXXu0L80RGlV-PHh6M/edit" target="_blank"><span class="icon">📝</span><span class="text">Referee Evidence Sync up Notes</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1WDaQrpIOMfsGNAmzP0ZZGl_bOl2q0CprYPD67VEqoYw/edit" target="_blank"><span class="icon">📝</span><span class="text">Spring 27 Retro Notes</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1SGd0MUxZvmdiujlXB5ZjX1efi58WnZ1R1fidlR1nn1E/edit" target="_blank"><span class="icon">📝</span><span class="text">Sync ups Notes</span></a></li>
+        <li><a href="https://docs.google.com/document/d/14HFUWSa8Zz9_1gcvmh4CAvJRM_I4fHRJ4vXUw7omyhQ/edit" target="_blank"><span class="icon">📝</span><span class="text">Face API Weekly Sync</span><span class="date">Feb 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1zkajFx7HA2y-YPrGlzFmvs4fdHaST7K9tE0bzbh88w8/edit" target="_blank"><span class="icon">📝</span><span class="text">Document API On-Call</span><span class="date">Feb 2026</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1Ber7ztZXqcZjBSncB5V0wmG4g_-tk9ckFNVFMFUTYNY/edit" target="_blank"><span class="icon">📝</span><span class="text">Credential + Agreement APIs Weekly Sync up</span><span class="date">Dec 2025</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1Cir6TGUEf5l-XScbC1QckpHGcV3Otlb99CTmaixIEh8/edit" target="_blank"><span class="icon">📝</span><span class="text">IGP Sprint Retro/Demo/Planning</span><span class="date">Nov 2025</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1Zgin3u4Vdklg64De-eKpCCo2pZn2zHGDrEidB-Ec5Go/edit" target="_blank"><span class="icon">📝</span><span class="text">Face Verification (Liveness) — Brainstorming</span><span class="date">Oct 2025</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1fbduLf0iI3BS7DCvAdOOO0fxWj92avKlm9kHjVZwP1c/edit" target="_blank"><span class="icon">📝</span><span class="text">White Label Customer Sync up Notes</span></a></li>
+        <li><a href="https://docs.google.com/document/d/1uAvzMpkuuw11BHEnM2s5CHrfdI-oPkIR1_Qj9GbKIZk/edit" target="_blank"><span class="icon">📝</span><span class="text">AVS &lt;-&gt; Tools Sync up</span></a></li>
+      </ul>
+    </div>
+
+  </div>
+  <p id="no-results" class="no-results hidden">No documents match your filter.</p>
+</div>
+
+<script>
+  function filterDocs() {
+    const q = document.getElementById('search').value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+    let anyVisible = false;
+
+    cards.forEach(card => {
+      const links = card.querySelectorAll('li');
+      let cardHasMatch = false;
+
+      // Also match category header
+      const header = card.getAttribute('data-category').toLowerCase();
+      const headerMatch = !q || header.includes(q);
+
+      links.forEach(li => {
+        const text = li.textContent.toLowerCase();
+        if (!q || text.includes(q) || headerMatch) {
+          li.classList.remove('hidden');
+          cardHasMatch = true;
+        } else {
+          li.classList.add('hidden');
+        }
+      });
+
+      if (cardHasMatch) {
+        card.style.display = '';
+        anyVisible = true;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.getElementById('no-results').classList.toggle('hidden', anyVisible);
+  }
+</script>
+
+</body>
+</html>

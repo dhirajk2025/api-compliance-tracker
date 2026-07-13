@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #000;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 40px;
+    }
+    h1 { font-size: 18pt; margin-bottom: 4px; }
+    h2 { font-size: 14pt; margin-top: 28px; margin-bottom: 6px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { font-size: 12pt; margin-top: 18px; margin-bottom: 4px; }
+    .meta { font-size: 10pt; color: #444; margin-bottom: 24px; line-height: 1.8; }
+    .meta strong { color: #000; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 10pt;
+      margin: 12px 0 20px 0;
+    }
+    th {
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 7px 10px;
+      text-align: left;
+      font-weight: bold;
+    }
+    td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+    pre {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-size: 9.5pt;
+      font-family: "Courier New", monospace;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .recommendation-box {
+      border-left: 4px solid #1a73e8;
+      background: #f0f6ff;
+      padding: 12px 16px;
+      margin: 16px 0;
+    }
+    .recommendation-box p { margin: 4px 0; }
+    ul, ol { margin: 8px 0 12px 0; padding-left: 24px; }
+    li { margin-bottom: 4px; }
+    .label-recommended {
+      display: inline-block;
+      background: #1a73e8;
+      color: white;
+      font-size: 9pt;
+      padding: 1px 8px;
+      border-radius: 3px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .label-alternative {
+      display: inline-block;
+      background: #888;
+      color: white;
+      font-size: 9pt;
+      padding: 1px 8px;
+      border-radius: 3px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .diagram {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 14px 18px;
+      font-family: "Courier New", monospace;
+      font-size: 9.5pt;
+      line-height: 1.7;
+      margin: 12px 0;
+    }
+    p { margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Consent API — Async Write Design: Message Bus vs. Redis Streams</h1>
+
+<div class="meta">
+  <strong>Authors:</strong> Dhiraj Kulkarni, Pavan Prasanna Kumar<br/>
+  <strong>Reviewers:</strong> Jayesh, Abhishek Gaur<br/>
+  <strong>Status:</strong> Draft<br/>
+  <strong>Date:</strong> 2026-05-04<br/>
+  <strong>Jira:</strong> IGAV-XXXX
+</div>
+
+<!-- BACKGROUND -->
+<h2>Background</h2>
+<p>The Face Liveness Web SDK executes <code>POST /v1/consents</code> synchronously on the critical path of every liveness session. Any latency or failure in the Consent API's database write directly cancels the iProov session and degrades liveness pass rates.</p>
+<p>The original Rails monolith handled consent via <code>IDme::Consent.generate!</code> + a Sidekiq job (<code>Worker::Consent::Notify</code>, <code>retry: false</code>) — effectively fire-and-forget from the user's request thread. The move to a standalone HTTP API lost that property. We want to restore it.</p>
+<p><strong>Goal:</strong> The Consent API returns <code>202 Accepted</code> the moment it has durably enqueued the consent event. The DB write happens off the SDK's critical path, with backend retries, invisible to the member.</p>
+
+<!-- PROBLEM STATEMENT -->
+<h2>Problem Statement</h2>
+<table>
+  <tr><th>Symptom</th><th>Root Cause</th></tr>
+  <tr><td>iProov session canceled on consent failure</td><td>SDK blocks on synchronous DB write</td></tr>
+  <tr><td>No backend retry</td><td><code>retry: false</code> posture inherited from Sidekiq</td></tr>
+  <tr><td>Duplicate rows on SDK retry (UNS-4752)</td><td>No idempotency on <code>POST /v1/consents</code></td></tr>
+  <tr><td>Liveness pass rate degrades with DB latency</td><td>DB commit on the SDK's hot path</td></tr>
+</table>
+
+<!-- OPTION 1 -->
+<h2>Option 1 — Message Bus (Proposed by Pavan) <span class="label-recommended">Recommended</span></h2>
+
+<h3>How it works</h3>
+<p>The Consent API publishes a <code>consent.granted</code> event to the company message bus (<code>identity.consent.v1</code>) and immediately returns <code>202 Accepted</code>. A DB-writer subscriber owns the durable <code>INSERT</code>. <code>Worker::Consent::Notify</code> (member SMS/email) migrates from a Sidekiq enqueue to a second subscriber.</p>
+
+<div class="diagram">
+SDK → POST /v1/consents (Idempotency-Key)
+        ↓
+    Consent API → publish consent.granted → Bus ACK → 202 Accepted → SDK
+                                                  ↓
+                        ┌─────────────────────────┴──────────────────────────┐
+                        ▼                                                     ▼
+               DB Writer subscriber                             Worker::Consent::Notify
+               INSERT consents (retry / DLQ)                    SMS / email (subscriber)
+</div>
+
+<h3>Event Schema (v1, minimal)</h3>
+<pre>{
+  "schema":      "identity.consent.v1",
+  "event_id":    "01JR8...ULID",
+  "occurred_at": "2026-05-04T18:11:42.337Z",
+  "type":        "consent.granted",
+  "consent": {
+    "user_id":         "uuid",
+    "consumer_id":     "uuid",
+    "policy_id":       "uuid",
+    "definition_uuid": "uuid",
+    "consenter":       "user",
+    "channel":         "web_sdk_face_liveness"
+  },
+  "trace": { "session_token_hash": "...", "request_id": "..." }
+}</pre>
+<p>No PII. Topic encrypted at rest. Schema-registry enforced. Breaking changes ship as v2.</p>
+
+<h3>What the SDK gains</h3>
+<ul>
+  <li>No longer waits for Postgres — only waits for bus enqueue ACK (sub-millisecond)</li>
+  <li>SDK retries are safe — <code>Idempotency-Key: sessionToken + definitionUuid</code> dedupes at publish</li>
+  <li>Backend retries return — per-consumer DLQ on the bus, invisible to the member</li>
+  <li><code>Worker::Consent::Notify</code> becomes a bus subscriber — member-facing behavior unchanged</li>
+</ul>
+
+<h3>Asks of Data Platform</h3>
+<ol>
+  <li>Provision topic <code>identity.consent.v1</code> (30-day replay window)</li>
+  <li>Onboard <code>idme-consent-api</code> as a producer (synchronous publish, ack-on-commit)</li>
+  <li>Approve the DB-writer subscriber pattern</li>
+  <li>Sign off on v1 event schema before producer code merges</li>
+</ol>
+
+<!-- OPTION 2 -->
+<h2>Option 2 — Redis Streams <span class="label-alternative">Alternative</span></h2>
+
+<h3>How it works</h3>
+<p>The Consent API writes the consent event to a Redis Stream and returns <code>200 OK</code> immediately. A background consumer reads from the stream, writes to Postgres, and ACKs the message. Unprocessed messages remain in the stream until ACKed, enabling reliable retry without any additional infrastructure.</p>
+
+<div class="diagram">
+SDK → POST /v1/consents
+        ↓
+    Consent API → XADD consent_stream → 200 OK → SDK
+
+Background Consumer:
+    XREADGROUP → DB write → XACK
+    (no ACK on failure → message stays → retried on next poll)
+</div>
+
+<h3>Redis Streams primitives used</h3>
+<table>
+  <tr><th>Primitive</th><th>Purpose</th></tr>
+  <tr><td><code>XADD</code></td><td>Enqueue consent event</td></tr>
+  <tr><td><code>XREADGROUP</code></td><td>Consumer group reads — each message delivered once per group</td></tr>
+  <tr><td><code>XACK</code></td><td>Marks message processed after successful DB write</td></tr>
+  <tr><td>Pending Entries List (PEL)</td><td>Built-in visibility into unprocessed messages</td></tr>
+  <tr><td><code>XCLAIM</code></td><td>Re-assign stale messages to another consumer on crash</td></tr>
+</table>
+
+<!-- COMPARISON -->
+<h2>Comparison</h2>
+<table>
+  <tr>
+    <th>Dimension</th>
+    <th>Message Bus (Option 1)</th>
+    <th>Redis Streams (Option 2)</th>
+  </tr>
+  <tr><td><strong>Infrastructure</strong></td><td>Existing Data Platform bus</td><td>Redis already in consent-api stack</td></tr>
+  <tr><td><strong>New infra needed</strong></td><td>No — topic provisioning only</td><td>No — Redis already present</td></tr>
+  <tr><td><strong>Fan-out</strong></td><td>Native — multiple subscribers</td><td>Manual — custom fan-out logic needed</td></tr>
+  <tr><td><strong>Worker::Consent::Notify migration</strong></td><td>Clean — becomes a subscriber</td><td>Requires separate fan-out mechanism</td></tr>
+  <tr><td><strong>Schema contract</strong></td><td>Versioned, schema-registry enforced</td><td>Ad-hoc, team-enforced</td></tr>
+  <tr><td><strong>DLQ / observability</strong></td><td>Built-in per-consumer DLQ</td><td>Manual — query PEL, build alerts</td></tr>
+  <tr><td><strong>Idempotency</strong></td><td>Event ID + Idempotency-Key at publish</td><td>Unique constraint on DB insert</td></tr>
+  <tr><td><strong>Development cost</strong></td><td>Medium — Data Platform coordination needed</td><td>Low — self-contained</td></tr>
+  <tr><td><strong>Delivery if bus/Redis is down</strong></td><td>API returns 5xx → SDK retries (same as today)</td><td>API returns 5xx → SDK retries (same as today)</td></tr>
+  <tr><td><strong>Long-term scalability</strong></td><td>High — composable, replayable, multi-consumer</td><td>Medium — suited for single consumer</td></tr>
+  <tr><td><strong>Team ownership</strong></td><td>Shared — consent team + Data Platform</td><td>Consent team owns end-to-end</td></tr>
+</table>
+
+<!-- FAILURE MODES -->
+<h2>Failure Modes</h2>
+<table>
+  <tr>
+    <th>Scenario</th>
+    <th>Message Bus</th>
+    <th>Redis Streams</th>
+  </tr>
+  <tr><td>DB down temporarily</td><td>Bus holds event; writer retries with DLQ</td><td>Stream holds event; consumer retries</td></tr>
+  <tr><td>Bus or Redis down</td><td>API returns 5xx; SDK retries (same as today)</td><td>API returns 5xx; SDK retries (same as today)</td></tr>
+  <tr><td>Consumer crashes mid-write</td><td>Message re-delivered (at-least-once)</td><td>PEL + XCLAIM re-assigns message</td></tr>
+  <tr><td>Duplicate SDK retry</td><td>Idempotency-Key dedupes at publish</td><td>Unique constraint on DB insert</td></tr>
+  <tr><td>Schema drift</td><td>Schema-registry catches breaking changes</td><td>Manual version management</td></tr>
+</table>
+
+<!-- RECOMMENDATION -->
+<h2>Recommendation</h2>
+<div class="recommendation-box">
+  <p><strong>Use the Message Bus (Option 1).</strong></p>
+  <p>The fundamental requirement is restoring the fire-and-forget contract that Sidekiq gave the Rails monolith. <code>Worker::Consent::Notify</code> is already a second consumer that exists today — migrating it to a bus subscriber is free leverage that Redis cannot provide without custom work. A message bus is the architecturally correct primitive when you have multiple consumers, need fan-out, schema governance, and event replay.</p>
+  <p>Redis Streams is the right fallback if Data Platform bandwidth is unavailable for this sprint. The technical shape is identical — same event payload, same 202 OK response, same consumer retry logic. If Redis is used as v1, migration to the bus is straightforward: swap <code>XADD</code> for a bus publish, nothing else changes.</p>
+</div>
+
+<p><strong>Decision criteria:</strong></p>
+<table>
+  <tr><th>Condition</th><th>Decision</th></tr>
+  <tr><td>Data Platform can provision the topic and onboard the producer within this sprint</td><td>✅ Option 1 — Message Bus</td></tr>
+  <tr><td>Data Platform bandwidth not available in near term</td><td>⚡ Option 2 — Redis Streams as v1, migrate to bus as fast follow</td></tr>
+</table>
+
+<!-- OPEN ITEMS -->
+<h2>Open Items</h2>
+<table>
+  <tr><th>Item</th><th>Owner</th><th>Status</th></tr>
+  <tr><td>Confirm Data Platform timeline for topic provisioning</td><td>Dhiraj / Data Platform</td><td>TBD</td></tr>
+  <tr><td>Finalize Idempotency-Key design (<code>sessionToken + definitionUuid</code>)</td><td>Abhishek</td><td>TBD</td></tr>
+  <tr><td>Scope DB-writer subscriber implementation</td><td>Jayesh</td><td>TBD</td></tr>
+  <tr><td>Schema sign-off on <code>identity.consent.v1</code></td><td>Data Platform</td><td>TBD</td></tr>
+  <tr><td>Redis fallback scoping if bus not available this sprint</td><td>Consent API team</td><td>TBD</td></tr>
+</table>
+
+</body>
+</html>

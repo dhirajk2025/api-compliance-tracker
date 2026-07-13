@@ -123,9 +123,8 @@ class JiraClient:
             "issuetype": {"name": "Epic"},
             "labels": labels,
         }
-        # Some Jira instances require an explicit Epic Name field
-        for epic_name_field in ("customfield_10011", "customfield_10008"):
-            fields[epic_name_field] = api_name
+        # Some Jira instances require an explicit Epic Name field (customfield_10011)
+        fields["customfield_10011"] = api_name
         if pm_epic_key and epic_link_field:
             fields[epic_link_field] = pm_epic_key
         payload = {"fields": fields}
@@ -154,8 +153,8 @@ class JiraClient:
             "labels": labels,
             "priority": {"name": priority},
         }
-        if epic_key and epic_link_field:
-            fields[epic_link_field] = epic_key
+        if epic_key:
+            fields["parent"] = {"key": epic_key}
         return {"fields": fields}
 
     def has_confluence_link(self, issue: dict) -> bool:
